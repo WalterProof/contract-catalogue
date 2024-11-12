@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-ligo_compiler?=docker run --rm -v "$(PWD)":"$(PWD)" -w "$(PWD)" ligolang/ligo:1.2.0
+ligo_compiler?=docker run --rm -v "$(PWD)":"$(PWD)" -w "$(PWD)" ligolang/ligo:1.7.0
 # ^ Override this variable when you run make command by make <COMMAND> ligo_compiler=<LIGO_EXECUTABLE>
 # ^ Otherwise use default one (you'll need docker)
 PROTOCOL_OPT?=
@@ -44,20 +44,6 @@ compile: ## compile contracts
 clean: ## clean up
 	@rm -rf compiled
 
-deploy: deploy_deps deploy.js
-
-deploy.js:
-	@echo "Running deploy script\n"
-	@cd deploy && npm i && npm start
-
-deploy_deps:
-	@echo "Installing deploy script dependencies"
-	@cd deploy && npm install
-	@echo ""
-
-install: ## install dependencies
-	@$(ligo_compiler) install
-
 .PHONY: test
 test: ## run tests (SUITE=permit make test)
 ifndef SUITE
@@ -73,6 +59,3 @@ ifndef SUITE
 else
 	@$(call test,$(SUITE).test.mligo)
 endif
-
-lint: ## lint code
-	@npx eslint ./scripts --ext .ts
